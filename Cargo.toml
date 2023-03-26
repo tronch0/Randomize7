@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 cpal = "0.13.1"
-hound = "3.4.0"
+num-complex = "0.4"
+byteorder = "1.4.3"

@@ -1,12 +1,14 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-// use hound;
-// use std::io::BufWriter;
+use byteorder::{ByteOrder, LittleEndian};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
+extern crate num_complex;
+use num_complex::Complex;
+
 const SAMPLE_RATE: u32 = 44100;
 // const CHANNELS: u16 = 1;
-const RECORD_DURATION_SECS: u64 = 5;
+const RECORD_DURATION_SECS: u64 = 2;
 // const RECORDING_FILE: &str = "recording.wav";
 
 fn main() {
@@ -39,22 +41,9 @@ fn main() {
     input_stream.play().unwrap();
     std::thread::sleep(Duration::from_secs(RECORD_DURATION_SECS));
 
-    // let spec = hound::WavSpec {
-    //     channels: CHANNELS,
-    //     sample_rate: sample_rate as u32,
-    //     bits_per_sample: 32,
-    //     sample_format: hound::SampleFormat::Float,
-    // };
-
-    // let mut writer = hound::WavWriter::new(BufWriter::new(std::fs::File::create(RECORDING_FILE).unwrap()), spec).unwrap();
     let mut recording = recording.lock().unwrap();
-    // for &sample in recording.iter() {
-    //     writer.write_sample(sample).unwrap();
-    // }
-    // writer.finalize().unwrap();
 
     println!("Recording complete.");
-
 
     remove_dc_offset(&mut recording);
     println!("Offsetting complete.");
@@ -63,10 +52,17 @@ fn main() {
     println!("normalization complete.");
 
     let num_lsb = 8; // Adjust this value depending on the desired quality of randomness
-    let output_length = 5; // Set the desired output length (in bytes)
+    let output_length = 32; // Set the desired output length (in bytes)
     let random_data = extract_random_data(&recording, num_lsb, output_length);
 
     print_random_data_as_hex(&random_data);
+
+    let rec = f32_to_u8(&recording);
+    let mono_score = monobit_test(&rec);
+    println!("Is output (monobit) random: {}", mono_score);
+
+    let runs_score = runs_test(&rec);
+    println!("Is output (runs) random: {}", runs_score);
 }
 
 fn remove_dc_offset(samples: &mut Vec<f32>) {
@@ -111,4 +107,42 @@ fn print_random_data_as_hex(random_data: &[u8]) {
         .collect::<String>();
 
     println!("Random data (hex): {}", hex_string);
+}
+
+fn monobit_test(data: &[u8]) -> bool {
+    let bit_count = data.iter().map(|&byte| byte.count_ones()).sum::<u32>();
+    let total_bits = data.len() * 8;
+    let proportion = bit_count as f64 / total_bits as f64;
+    0.45 < proportion && proportion < 0.55
+}
+
+fn runs_test(data: &[u8]) -> bool {
+    let mut prev_bit = data[0] & 0x80;
+    let mut run_count = 0;
+    let mut run_lengths = vec![0; 6];
+    for &byte in data {
+        for i in 0..8 {
+            let bit = byte & (0x80 >> i);
+            if bit != prev_bit {
+                run_count += 1;
+                if run_count <= 6 {
+                    run_lengths[run_count - 1] += 1;
+                }
+                prev_bit = bit;
+            }
+        }
+    }
+    let n = data.len() * 8;
+    let p_value = (2.0 * (run_lengths[0] as f64) - n as f64).abs() / (2.0 * ((n as f64).sqrt()));
+    p_value < 1.96
+}
+
+fn f32_to_u8(data: &[f32]) -> Vec<u8> {
+    let mut bytes = Vec::with_capacity(data.len() * 4);
+    for value in data {
+        let mut buffer = [0u8; 4];
+        LittleEndian::write_f32(&mut buffer, *value);
+        bytes.extend_from_slice(&buffer);
+    }
+    bytes
 }
