@@ -1,5 +1,19 @@
 # Randomize7
-This project provides a tool for extracting randomness from recorded audio. By recording unpredictable noise sources, such as atmospheric or electronic noise, this tool generates random data that can be used in various applications. This README provides instructions on selecting suitable noise sources, using the software, and testing the quality of the extracted randomness.
+This project provides a tool for extracting randomness from your computer's mic. By recording unpredictable noise sources, such as atmospheric or electronic noise, this tool generates random data that can be used in various applications. This README provides instructions on selecting suitable noise sources, using the software, and testing the quality of the extracted randomness.
+
+## Run this project
+
+1. Clone the repository.
+2. Install the required dependencies `cargo install`.
+3. Run the project with `cargo run`.
+4. After running the project, follow the prompts to configure the recording settings and start recording.
+
+
+TODO:
+
+- [ ] Use substraction technique to enhance randomness quality
+- [ ] Use cryptogphic hash function on the output to enhance randomness quality
+- [ ] Extend randomness quality testing
 
 
 ## Choosing Noise Sources
@@ -17,34 +31,17 @@ To obtain good randomness, it's essential to choose suitable noise sources. Here
 - Music or speech: These sources are structured and not suitable for generating randomness.
 - Ambient noise in quiet environments: Background noise in quiet environments may not provide enough entropy for good randomness.
 
-## Run this project
-
-1. Clone the repository git clone https://github.com/your_username/randomness-extractor-from-audio.git
-2. Install the required dependencies cargo install --path .
-3. Run "cargo run"
-4. After running the software, follow the prompts to configure the recording settings and start recording.
-
 
 ## Tests Conducted
 
 To evaluate the quality of the extracted randomness, we conducted several tests using well-known statistical test suites:
 
-1. NIST Statistical Test Suite: The NIST suite provides a collection of tests for assessing the quality of random data. We performed all tests in the suite and analyzed the results to ensure the extracted randomness met the recommended requirements.
-
-2. Dieharder Test Suite: Dieharder is another comprehensive test suite for random number generators. We ran all tests in the Dieharder suite and evaluated the results to confirm the quality of the generated random data.
-
-
-By passing these tests, we have demonstrated that the extracted randomness is of high quality and suitable for various applications. Note, however, that the quality of the randomness depends on the chosen noise source, recording process, and extraction algorithm. It's important to choose suitable noise sources and fine-tune the settings to achieve the desired level of randomness.
 
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## Contributing
 Feel free to submit pull requests and bug reports.
 
 ## Acknowledgment
-
-Project inspiration
-Library used for audio processing
-Library used for randomness extraction
