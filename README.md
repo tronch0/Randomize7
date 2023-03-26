@@ -9,13 +9,6 @@ This project provides a tool for extracting randomness from your computer's mic.
 4. After running the project, follow the prompts to configure the recording settings and start recording.
 
 
-TODO:
-
-- [ ] Use substraction technique to enhance randomness quality
-- [ ] Use cryptogphic hash function on the output to enhance randomness quality
-- [ ] Extend randomness quality testing
-
-
 ## Choosing Noise Sources
 
 To obtain good randomness, it's essential to choose suitable noise sources. Here are some recommendations:
@@ -37,9 +30,13 @@ To obtain good randomness, it's essential to choose suitable noise sources. Here
 To evaluate the quality of the extracted randomness, we conducted several tests using well-known statistical test suites:
 
 
+## TODO:
 
-## License
-This project is licensed under the MIT License.
+- [ ] Use substraction technique to enhance randomness quality
+- [ ] Use cryptogphic hash function on the output to enhance randomness quality
+- [ ] Extend randomness quality testing
+- [ ] Add optional program arguments (output length, quality, rec duration)
+
 
 ## Contributing
 Feel free to submit pull requests and bug reports.
